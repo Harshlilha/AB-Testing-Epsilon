@@ -754,22 +754,20 @@
             const metricsGrid = document.getElementById('metrics-grid');
             metricsGrid.innerHTML = ''; // Clear previous metrics
 
-            let highestConversionRate = -1;
+            let highestOpenRate = -1;
             let winningVariation = '';
 
-            // Determine the winner first
+            // Determine the winner first based on Open Rate
             for (const variationName in data.metrics) {
                 const metrics = data.metrics[variationName];
-                if (metrics.conversion_rate > highestConversionRate) {
-                    highestConversionRate = metrics.conversion_rate;
+                if (metrics.open_rate > highestOpenRate) {
+                    highestOpenRate = metrics.open_rate;
                     winningVariation = variationName;
                 }
             }
 
             const chartLabels = [];
             const openRates = [];
-            const clickRates = [];
-            const conversionRates = [];
 
             for (const variationName in data.metrics) {
                 const metrics = data.metrics[variationName];
@@ -779,21 +777,15 @@
                     <h4>${variationName.replace('_', ' ')}</h4>
                     <p>Total Sent: <span class="value">${metrics.total_sent}</span></p>
                     <p>Opened: <span class="value">${metrics.opened}</span></p>
-                    <p>Clicked: <span class="value">${metrics.clicked}</span></p>
-                    <p>Converted: <span class="value">${metrics.converted}</span></p>
                     <p>Open Rate: <span class="rate ${metrics.open_rate > 50 ? 'high' : metrics.open_rate > 20 ? 'medium' : 'low'}">${metrics.open_rate.toFixed(2)}%</span></p>
-                    <p>Click Rate: <span class="rate ${metrics.click_rate > 10 ? 'high' : metrics.click_rate > 3 ? 'medium' : 'low'}">${metrics.click_rate.toFixed(2)}%</span></p>
-                    <p>Conversion Rate: <span class="rate ${metrics.conversion_rate > 5 ? 'high' : metrics.conversion_rate > 1 ? 'medium' : 'low'}">${metrics.conversion_rate.toFixed(2)}%</span></p>
                 `;
                 metricsGrid.appendChild(card);
 
                 chartLabels.push(variationName.replace('_', ' '));
                 openRates.push(metrics.open_rate);
-                clickRates.push(metrics.click_rate);
-                conversionRates.push(metrics.conversion_rate);
             }
 
-            createResultsChart({ chartLabels, openRates, clickRates, conversionRates });
+            createResultsChart({ chartLabels, openRates });
         }
 
         function createResultsChart(metrics) {
@@ -813,20 +805,6 @@
                             data: metrics.openRates,
                             backgroundColor: 'rgba(102, 126, 234, 0.7)',
                             borderColor: 'rgba(102, 126, 234, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Click Rate (%)',
-                            data: metrics.clickRates,
-                            backgroundColor: 'rgba(118, 75, 162, 0.7)',
-                            borderColor: 'rgba(118, 75, 162, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Conversion Rate (%)',
-                            data: metrics.conversionRates,
-                            backgroundColor: 'rgba(40, 167, 69, 0.7)',
-                            borderColor: 'rgba(40, 167, 69, 1)',
                             borderWidth: 1
                         }
                     ]
